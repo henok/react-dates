@@ -42,6 +42,8 @@ const propTypes = forbidExtraProps({
 
   focused: PropTypes.bool,
   onFocusChange: PropTypes.func,
+  onMouseOverDay: PropTypes.func,
+  onMouseOutDay: PropTypes.func,
   onClose: PropTypes.func,
 
   keepOpenOnDateSelect: PropTypes.bool,
@@ -367,7 +369,7 @@ export default class DayPickerSingleDateController extends React.PureComponent {
 
   onDayMouseEnter(day) {
     if (this.isTouchDevice) return;
-    const { hoverDate, visibleDays } = this.state;
+    const { hoverDate, visibleDays, onMouseOverDay } = this.state;
 
     let modifiers = this.deleteModifier({}, hoverDate, 'hovered');
     modifiers = this.addModifier(modifiers, day, 'hovered');
@@ -379,10 +381,14 @@ export default class DayPickerSingleDateController extends React.PureComponent {
         ...modifiers,
       },
     });
+
+    if (onMouseOverDay != null) {
+      onMouseOverDay(hoverDate);
+    }
   }
 
   onDayMouseLeave() {
-    const { hoverDate, visibleDays } = this.state;
+    const { hoverDate, visibleDays, onMouseOutDay } = this.state;
     if (this.isTouchDevice || !hoverDate) return;
 
     const modifiers = this.deleteModifier({}, hoverDate, 'hovered');
@@ -394,6 +400,10 @@ export default class DayPickerSingleDateController extends React.PureComponent {
         ...modifiers,
       },
     });
+
+    if (onMouseOutDay != null) {
+      onMouseOutDay(hoverDate);
+    }
   }
 
   onPrevMonthClick() {
